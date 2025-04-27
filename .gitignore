@@ -1,1 +1,8 @@
+# ignore tudo
+*
+# exclua os subdiretórios
+!/**/
+# exclua os arquivos com extensão
+!*.*
+
 .vscode
