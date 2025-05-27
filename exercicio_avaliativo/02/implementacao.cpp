@@ -39,10 +39,10 @@ vector<vector<Aresta>> lerGrafo(int& intersecoes, int& origem, int& destino, int
 
 bool dijkstraComRestricao(const vector<vector<Aresta>>& grafo, int origem, int destino, int custoMaximo, int limitePedagio) {
     int n = grafo.size();
-    vector<vector<long long>> distancia(n, vector<long long>(2, LLONG_MAX));
+    vector<vector<int>> distancia(n, vector<int>(2, INT_MAX));
     distancia[origem][0] = 0;
 
-    priority_queue<tuple<long long, int, int>, vector<tuple<long long, int, int>>, greater<>> fila;
+    priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, greater<>> fila;
     fila.push({0, origem, 0});
 
     while (!fila.empty()) {
@@ -58,7 +58,7 @@ bool dijkstraComRestricao(const vector<vector<Aresta>>& grafo, int origem, int d
 
             if (w >= limitePedagio) novoEstado = 1;
 
-            long long novoCusto = custoAtual + w;
+            int novoCusto = custoAtual + w;
             if (novoCusto < distancia[v][novoEstado]) {
                 distancia[v][novoEstado] = novoCusto;
                 fila.push({novoCusto, v, novoEstado});
