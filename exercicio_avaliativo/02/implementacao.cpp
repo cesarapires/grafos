@@ -18,8 +18,8 @@ struct Aresta {
     int pedagio;
 };
 
-vector<vector<Aresta>> lerGrafo(int ligacoes, int& maiorPedagio) {
-    int intersecoes, origem, destino, custoMaximo;
+vector<vector<Aresta>> lerGrafo(int& intersecoes, int& origem, int& destino, int& custoMaximo, int& maiorPedagio) {
+    int ligacoes;
     cin >> intersecoes >> ligacoes >> origem >> destino >> custoMaximo;
     origem--; destino--;
 
@@ -87,27 +87,12 @@ int encontrarMaiorPedagioMinimo(const vector<vector<Aresta>>& grafo, int origem,
 }
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
     int casosDeTeste;
     cin >> casosDeTeste;
 
     while (casosDeTeste--) {
-        int intersecoes, ligacoes, origem, destino, custoMaximo;
-        cin >> intersecoes >> ligacoes >> origem >> destino >> custoMaximo;
-        origem--; destino--;
-
-        int maiorPedagio = 0;
-        vector<vector<Aresta>> grafo(intersecoes);
-
-        for (int i = 0; i < ligacoes; ++i) {
-            int de, para, custo;
-            cin >> de >> para >> custo;
-            de--; para--;
-            grafo[de].push_back({para, custo});
-            maiorPedagio = max(maiorPedagio, custo);
-        }
+        int intersecoes, origem, destino, custoMaximo, maiorPedagio;
+        vector<vector<Aresta>> grafo = lerGrafo(intersecoes, origem, destino, custoMaximo, maiorPedagio);
 
         int resposta = encontrarMaiorPedagioMinimo(grafo, origem, destino, custoMaximo, maiorPedagio);
         cout << resposta << '\n';
