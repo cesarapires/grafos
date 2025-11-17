@@ -32,16 +32,19 @@ void lerArquivoEntrada(const string& nomeArquivo, int*& vetor, int& tamanho) {
     return;
 }
 
-int msc(int linha, int coluna, int tamanhoVetor) {
+int msc(int linha, int coluna, int tamanhoVetor, const int* vetor) {
     if (coluna > tamanhoVetor) return 0;
-    return 0;
+    
+    if (vetor[coluna] <= vetor[linha]) {
+        return 1 + msc(coluna, coluna + 1, tamanhoVetor, vetor);
+    } 
+    int opcao1 = msc(linha, coluna + 1, tamanhoVetor, vetor);
+    int opcao2 = msc(coluna, coluna + 1, tamanhoVetor, vetor);
+    
+    return max(opcao1, opcao2);
 }
 
 void processarMsc(int* vetor, int tamanho, vector<vector<int>>& matrizCusto, vector<vector<int>>& matrizRastreio) {
-    (void)vetor;
-    (void)tamanho;
-    (void)matrizCusto;
-    (void)matrizRastreio;
 }
 
 void escreverArquivoSaida(const string& nomeArquivo, const int* vetor, int tamanho, const vector<vector<int>>& matrizCusto, const vector<vector<int>>& matrizRastreio) {
