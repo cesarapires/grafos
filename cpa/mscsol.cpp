@@ -67,14 +67,12 @@ int main(int argc, char* argv[]) {
             continue;
         }
 
-        out << sol.size() << '\n';
         for (size_t k = 0; k < sol.size(); ++k) {
             out << sol[k];
             if (k + 1 < sol.size()) out << ' ';
         }
         out << '\n';
-
-        cout << "Gerado " << outName << " (a partir de " << nome << ")\n";
     }
+    
     return 0;
 }
