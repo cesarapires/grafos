@@ -39,6 +39,27 @@ bool escreverSolucao(const string& outName, const vector<int>& sol) {
     return true;
 }
 
+vector<int> construirSolucao(const vector<int>& vetor, int n, int colunas, const vector<int>& dadosRastreio) {
+    vector<int> sol;
+    
+    int i = 0;
+    int j = 1;
+
+    while (j <= n) {
+        int col = j - 1;
+        int mark = dadosRastreio[i * colunas + col];
+        if (mark == 1) {
+            sol.push_back(vetor[j - 1]);
+            i = j;
+            ++j;
+        } else {
+            ++j;
+        }
+    }
+    
+    return sol;
+}
+
 int main(int argc, char* argv[]) {
     vector<string> saidas = {"saida1.txt", "saida2.txt", "saida3.txt"};
     for (size_t idx = 0; idx < saidas.size(); ++idx) {
@@ -66,20 +87,7 @@ int main(int argc, char* argv[]) {
 
         vector<int> dadosRastreio = lerMatrizInt(in, linhas, colunas);
 
-        vector<int> sol;
-        int i = 0;
-        int j = 1;
-        while (j <= n) {
-            int col = j - 1;
-            int mark = dadosRastreio[i * colunas + col];
-            if (mark == 1) {
-                sol.push_back(vetor[j - 1]);
-                i = j;
-                j = j + 1;
-            } else {
-                j = j + 1;
-            }
-        }
+        vector<int> sol = construirSolucao(vetor, n, colunas, dadosRastreio);
 
         string outName = "sol" + to_string(idx + 1) + ".txt";
         
