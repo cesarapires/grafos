@@ -32,19 +32,66 @@ void lerArquivoEntrada(const string& nomeArquivo, int*& vetor, int& tamanho) {
     return;
 }
 
-int msc(int linha, int coluna, int tamanhoVetor, const int* vetor) {
-    if (coluna > tamanhoVetor) return 0;
+int msc(int linha, int coluna, int tamanhoVetor, const int* vetor,
+    vector<vector<int>>& matrizCusto, vector<vector<int>>& matrizRastreio) {
     
-    if (vetor[coluna] <= vetor[linha]) {
-        return 1 + msc(coluna, coluna + 1, tamanhoVetor, vetor);
-    } 
-    int opcao1 = msc(linha, coluna + 1, tamanhoVetor, vetor);
-    int opcao2 = msc(coluna, coluna + 1, tamanhoVetor, vetor);
-    
-    return max(opcao1, opcao2);
+    if (coluna > tamanhoVetor) {
+        if (linha >= 0 && linha <= tamanhoVetor && coluna >= 0 && coluna <= tamanhoVetor)
+            matrizCusto[linha][coluna] = 0;
+        return 0;
+    }
+
+    if (matrizCusto[linha][coluna] != -1) {
+        return matrizCusto[linha][coluna];
+    }
+
+    int res = 0;
+    if (vetor[coluna - 1] > vetor[linha - 1]) {
+        int val = 1 + msc(coluna, coluna + 1, tamanhoVetor, vetor, matrizCusto, matrizRastreio);
+        res = val;
+        matrizRastreio[linha][coluna] = coluna;
+    } else {
+        int opcao1 = msc(linha, coluna + 1, tamanhoVetor, vetor, matrizCusto, matrizRastreio);
+        int opcao2 = msc(coluna, coluna + 1, tamanhoVetor, vetor, matrizCusto, matrizRastreio);
+        if (opcao2 > opcao1) {
+            res = opcao2;
+            matrizRastreio[linha][coluna] = coluna;
+        } else {
+            res = opcao1;
+            matrizRastreio[linha][coluna] = 0;
+        }
+    }
+
+    matrizCusto[linha][coluna] = res;
+    return res;
 }
 
 void processarMsc(int* vetor, int tamanho, vector<vector<int>>& matrizCusto, vector<vector<int>>& matrizRastreio) {
+    if (tamanho <= 0) return;
+
+    for (int i = 0; i <= tamanho; ++i) {
+        for (int j = 0; j <= tamanho; ++j) {
+            matrizCusto[i][j] = -1;
+            matrizRastreio[i][j] = 0;
+        }
+    }
+
+    for (int linha = 1; linha <= tamanho; ++linha) {
+        int maxAdd = 0;
+        int firstSucc = 0;
+        for (int col = linha + 1; col <= tamanho; ++col) {
+            int v = msc(linha, col, tamanho, vetor, matrizCusto, matrizRastreio);
+            if (v > maxAdd) {
+                maxAdd = v;
+                firstSucc = col;
+            }
+        }
+        matrizCusto[linha][0] = 1 + maxAdd;
+        matrizRastreio[linha][0] = firstSucc;
+    }
+
+    matrizCusto[0][0] = 0;
+    matrizRastreio[0][0] = 0;
 }
 
 void escreverArquivoSaida(const string& nomeArquivo, const int* vetor, int tamanho, const vector<vector<int>>& matrizCusto, const vector<vector<int>>& matrizRastreio) {
