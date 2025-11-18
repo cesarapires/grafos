@@ -34,8 +34,6 @@ bool escreverSolucao(const string& outName, const vector<int>& sol) {
         if (k + 1 < sol.size()) out << ' ';
     }
     
-    out << '\n';
-    
     return true;
 }
 
