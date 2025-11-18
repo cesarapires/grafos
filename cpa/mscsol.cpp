@@ -7,7 +7,9 @@ using namespace std;
 
 vector<int> lerMatrizInt(ifstream &in, int linhas, int colunas) {
     vector<int> dados;
+
     dados.reserve(linhas * colunas);
+    
     for (int i = 0; i < linhas; ++i) {
         for (int j = 0; j < colunas; ++j) {
             int x;
@@ -15,7 +17,26 @@ vector<int> lerMatrizInt(ifstream &in, int linhas, int colunas) {
             dados.push_back(x);
         }
     }
+    
     return dados;
+}
+
+bool escreverSolucao(const string& outName, const vector<int>& sol) {
+    ofstream out(outName);
+    
+    if (!out) {
+        cerr << "Nao foi possivel criar " << outName << endl;
+        return false;
+    }
+
+    for (size_t k = 0; k < sol.size(); ++k) {
+        out << sol[k];
+        if (k + 1 < sol.size()) out << ' ';
+    }
+    
+    out << '\n';
+    
+    return true;
 }
 
 int main(int argc, char* argv[]) {
@@ -24,14 +45,14 @@ int main(int argc, char* argv[]) {
         const string& nome = saidas[idx];
         ifstream in(nome);
         if (!in) {
-            cerr << "Nao foi possivel abrir " << nome << "\n";
+            cerr << "Nao foi possivel abrir " << nome << endl;
             continue;
         }
 
         int n;
         in >> n;
         if (!in || n <= 0) {
-            cerr << "Formato invalido em " << nome << " (n)\n";
+            cerr << "Formato invalido em " << nome << " (n)" << endl;
             continue;
         }
 
@@ -61,17 +82,8 @@ int main(int argc, char* argv[]) {
         }
 
         string outName = "sol" + to_string(idx + 1) + ".txt";
-        ofstream out(outName);
-        if (!out) {
-            cerr << "Nao foi possivel criar " << outName << "\n";
-            continue;
-        }
-
-        for (size_t k = 0; k < sol.size(); ++k) {
-            out << sol[k];
-            if (k + 1 < sol.size()) out << ' ';
-        }
-        out << '\n';
+        
+        if (!escreverSolucao(outName, sol)) continue;
     }
     
     return 0;
