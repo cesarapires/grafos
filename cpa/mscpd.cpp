@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <climits>
 #include <vector>
 
 using namespace std;
@@ -34,36 +35,37 @@ void lerArquivoEntrada(const string& nomeArquivo, int*& vetor, int& tamanho) {
 
 int msc(int linha, int coluna, int tamanhoVetor, const int* vetor,
     vector<vector<int>>& matrizCusto, vector<vector<int>>& matrizRastreio) {
-    
+    int indiceColuna = coluna - 1;
+
     if (coluna > tamanhoVetor) {
-        if (linha >= 0 && linha <= tamanhoVetor && coluna >= 0 && coluna <= tamanhoVetor)
-            matrizCusto[linha][coluna] = 0;
+        if (linha >= 0 && linha <= tamanhoVetor && indiceColuna >= 0 && indiceColuna <= tamanhoVetor)
+            matrizCusto[linha][indiceColuna] = 0;
         return 0;
     }
 
-    if (matrizCusto[linha][coluna] != -1) {
-        return matrizCusto[linha][coluna];
-    }
+    if (matrizCusto[linha][indiceColuna] != -1) return matrizCusto[linha][indiceColuna];
 
-    int res = 0;
-    if (vetor[coluna - 1] > vetor[linha - 1]) {
-        int val = 1 + msc(coluna, coluna + 1, tamanhoVetor, vetor, matrizCusto, matrizRastreio);
-        res = val;
-        matrizRastreio[linha][coluna] = coluna;
+    int ai = (linha == 0) ? INT_MIN : vetor[linha - 1];
+    int aj = vetor[coluna - 1];
+
+    int pular = msc(linha, coluna + 1, tamanhoVetor, vetor, matrizCusto, matrizRastreio);
+    int valor;
+    if (aj <= ai) {
+        matrizRastreio[linha][indiceColuna] = 0;
+        valor = pular;
     } else {
-        int opcao1 = msc(linha, coluna + 1, tamanhoVetor, vetor, matrizCusto, matrizRastreio);
-        int opcao2 = msc(coluna, coluna + 1, tamanhoVetor, vetor, matrizCusto, matrizRastreio);
-        if (opcao2 > opcao1) {
-            res = opcao2;
-            matrizRastreio[linha][coluna] = coluna;
+        int pegar = 1 + msc(coluna, coluna + 1, tamanhoVetor, vetor, matrizCusto, matrizRastreio);
+        if (pegar > pular) {
+            matrizRastreio[linha][indiceColuna] = 1;
+            valor = pegar;
         } else {
-            res = opcao1;
-            matrizRastreio[linha][coluna] = 0;
+            matrizRastreio[linha][indiceColuna] = 0;
+            valor = pular;
         }
     }
 
-    matrizCusto[linha][coluna] = res;
-    return res;
+    matrizCusto[linha][indiceColuna] = valor;
+    return valor;
 }
 
 void processarMsc(int* vetor, int tamanho, vector<vector<int>>& matrizCusto, vector<vector<int>>& matrizRastreio) {
@@ -76,22 +78,16 @@ void processarMsc(int* vetor, int tamanho, vector<vector<int>>& matrizCusto, vec
         }
     }
 
-    for (int linha = 1; linha <= tamanho; ++linha) {
-        int maxAdd = 0;
-        int firstSucc = 0;
-        for (int col = linha + 1; col <= tamanho; ++col) {
-            int v = msc(linha, col, tamanho, vetor, matrizCusto, matrizRastreio);
-            if (v > maxAdd) {
-                maxAdd = v;
-                firstSucc = col;
-            }
+    for (int i = 0; i <= tamanho; ++i) {
+        for (int col = 0; col <= i - 1; ++col) {
+            matrizCusto[i][col] = 0;
+            matrizRastreio[i][col] = 0;
         }
-        matrizCusto[linha][0] = 1 + maxAdd;
-        matrizRastreio[linha][0] = firstSucc;
     }
 
-    matrizCusto[0][0] = 0;
-    matrizRastreio[0][0] = 0;
+    for (int i = 0; i <= tamanho; ++i) {
+        msc(i, i + 1, tamanho, vetor, matrizCusto, matrizRastreio);
+    }
 }
 
 void escreverArquivoSaida(const string& nomeArquivo, const int* vetor, int tamanho, const vector<vector<int>>& matrizCusto, const vector<vector<int>>& matrizRastreio) {
