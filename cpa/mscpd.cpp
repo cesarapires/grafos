@@ -45,12 +45,12 @@ int msc(int linha, int coluna, int tamanhoVetor, const int* vetor,
 
     if (matrizCusto[linha][indiceColuna] != -1) return matrizCusto[linha][indiceColuna];
 
-    int ai = (linha == 0) ? INT_MIN : vetor[linha - 1];
-    int aj = vetor[coluna - 1];
+    int vLinha = (linha == 0) ? INT_MIN : vetor[linha - 1];
+    int vColuna = vetor[coluna - 1];
 
     int pular = msc(linha, coluna + 1, tamanhoVetor, vetor, matrizCusto, matrizRastreio);
     int valor;
-    if (aj <= ai) {
+    if (vColuna <= vLinha) {
         matrizRastreio[linha][indiceColuna] = 0;
         valor = pular;
     } else {
